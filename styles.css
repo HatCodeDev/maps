@@ -1,0 +1,36 @@
+#board {
+    display: grid;
+    grid-template-columns: repeat(11, 50px); /* 11 columnas (10 + encabezado) */
+    grid-template-rows: repeat(11, 50px);    /* 11 filas (10 + encabezado) */
+    gap: 0; /* Sin espacios entre celdas */
+    border: 2px solid black; /* Borde general del tablero */
+    background-color: white; /* Fondo del tablero */
+}
+
+.cell {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #000; /* Bordes individuales de las celdas */
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.cell.header {
+    background-color: #f0f0f0; /* Fondo gris claro para encabezados */
+    font-size: 16px;
+}
+
+.cell.empty {
+    background-color: #fff; /* Fondo blanco para la celda vacía */
+}
+
+.cell.coordinate {
+    background-color: #fff; /* Fondo blanco para las celdas normales */
+}
+
+.cell.path {
+    background-color: #a2d9ff; /* Azul claro para el camino */
+}
