@@ -44,38 +44,56 @@ document.addEventListener("DOMContentLoaded", () => {
         return { row, col };
     }
 
-    // Función BFS para encontrar el camino más corto
-    function bfs(start, end) {
-        const queue = [[start]];
-        const visited = new Set();
-        visited.add(`${start.row},${start.col}`);
-        const path = [];
+    // Función BFS actualizada para respetar sentidos de filas y columnas
+function bfs(start, end) {
+    const queue = [[start]];
+    const visited = new Set();
+    visited.add(`${start.row},${start.col}`);
 
-        while (queue.length > 0) {
-            const currentPath = queue.shift();
-            const { row, col } = currentPath[currentPath.length - 1];
+    while (queue.length > 0) {
+        const currentPath = queue.shift();
+        const { row, col } = currentPath[currentPath.length - 1];
 
-            if (row === end.row && col === end.col) {
-                return currentPath;
-            }
-
-            for (const [dRow, dCol] of directions) {
-                const newRow = row + dRow;
-                const newCol = col + dCol;
-
-                if (
-                    newRow >= 1 && newRow <= size &&
-                    newCol >= 1 && newCol <= size &&
-                    !visited.has(`${newRow},${newCol}`)
-                ) {
-                    visited.add(`${newRow},${newCol}`);
-                    queue.push([...currentPath, { row: newRow, col: newCol }]);
-                }
-            }
+        // Si llegamos al punto final, devolvemos el camino
+        if (row === end.row && col === end.col) {
+            return currentPath;
         }
 
-        return path; // Si no hay camino
+        // Movimientos válidos según las reglas
+        const possibleMoves = [];
+        if (row % 2 === 1) {
+            // Filas impares -> Solo hacia la derecha
+            possibleMoves.push([0, 1]); // Derecha
+        } else {
+            // Filas pares -> Solo hacia la izquierda
+            possibleMoves.push([0, -1]); // Izquierda
+        }
+
+        if (col % 2 === 1) {
+            // Columnas impares -> Solo hacia abajo
+            possibleMoves.push([1, 0]); // Abajo
+        } else {
+            // Columnas pares -> Solo hacia arriba
+            possibleMoves.push([-1, 0]); // Arriba
+        }
+
+        for (const [dRow, dCol] of possibleMoves) {
+            const newRow = row + dRow;
+            const newCol = col + dCol;
+
+            if (
+                newRow >= 1 && newRow <= size &&
+                newCol >= 1 && newCol <= size &&
+                !visited.has(`${newRow},${newCol}`)
+            ) {
+                visited.add(`${newRow},${newCol}`);
+                queue.push([...currentPath, { row: newRow, col: newCol }]);
+            }
+        }
     }
+
+    return []; // Si no hay camino
+}
 
     // Función para destacar el camino en el tablero
     function highlightPath(path) {
@@ -90,24 +108,60 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Función para mostrar el camino
-    function showPath(path) {
-        const output = document.getElementById("pathOutput");
-        if (path.length === 0) {
-            output.textContent = "No hay camino disponible.";
-        } else {
-            const pathText = path.map(({ row, col }) => `${letters[col]}${row}`).join(" -> ");
-            output.textContent = `Camino más corto: ${pathText}`;
-        }
-    }
+    // Mostrar camino actualizado para las nuevas reglas
+function showPath(path) {
+    const output = document.getElementById("pathOutput");
+    if (path.length === 0) {
+        output.textContent = "No hay camino disponible.";
+    } else {
+        let instructions = [];
+        let currentDirection = null;
+        let currentCount = 0;
 
-    // Lógica al presionar el botón
+        for (let i = 1; i < path.length; i++) {
+            const prev = path[i - 1];
+            const current = path[i];
+
+            const rowDiff = current.row - prev.row;
+            const colDiff = current.col - prev.col;
+            let newDirection = null;
+
+            if (rowDiff > 0) {
+                newDirection = "calles hacia abajo";
+            } else if (rowDiff < 0) {
+                newDirection = "calles hacia arriba";
+            } else if (colDiff > 0) {
+                newDirection = "cuadras hacia la derecha";
+            } else if (colDiff < 0) {
+                newDirection = "cuadras hacia la izquierda";
+            }
+
+            if (newDirection === currentDirection) {
+                currentCount++;
+            } else {
+                if (currentDirection) {
+                    instructions.push(`${currentCount} ${currentDirection}`);
+                }
+                currentDirection = newDirection;
+                currentCount = 1;
+            }
+        }
+
+        if (currentDirection) {
+            instructions.push(`${currentCount} ${currentDirection}`);
+        }
+
+        output.textContent = `Instrucciones: ${instructions.join(", ")}`;
+    }
+}
+
+     // Lógica al presionar el botón para encontrar el camino con las nuevas reglas
     findPathButton.addEventListener("click", () => {
         const start = toIndex(startInput.value);
         const end = toIndex(endInput.value);
-        
+
         const path = bfs(start, end);
         highlightPath(path);
         showPath(path);
-    });
+});
 });
