@@ -9,38 +9,59 @@ document.addEventListener("DOMContentLoaded", () => {
         [-1, 0], [1, 0], [0, -1], [0, 1]  // Movimientos: arriba, abajo, izquierda, derecha
     ];
 
-    // Crear el tablero
-    for (let row = 0; row <= size; row++) {
-        for (let col = 0; col <= size; col++) {
+    for (let row = 0; row <= size + 1; row++) {
+        for (let col = 0; col <= size + 1; col++) {
             const cell = document.createElement("div");
-
-            if (row === 0 && col === 0) {
-                // Esquina superior izquierda vacía
+    
+            // Esquinas vacías
+            if ((row === 0 && col === 0) || 
+                (row === 0 && col === size + 1) || 
+                (row === size + 1 && col === 0) || 
+                (row === size + 1 && col === size + 1)) {
                 cell.className = "cell empty";
-            } else if (row === 0) {
+            } else if (row === 0 && col <= size) {
                 // Encabezado superior (letras)
                 cell.className = "cell header";
                 cell.textContent = letters[col];
-            } else if (col === 0) {
+            } else if (col === 0 && row <= size) {
                 // Encabezado lateral izquierdo (números)
                 cell.className = "cell header";
                 cell.textContent = row;
+            } else if (row <= size && col === size + 1) {
+                // Flechas de filas (nueva columna)
+                cell.className = "cell arrow";
+                cell.textContent = row % 2 === 1 ? "→" : "←"; // Filas impares →, pares ←
+            } else if (col <= size && row === size + 1) {
+                // Flechas de columnas (nueva fila)
+                cell.className = "cell arrow";
+                cell.textContent = col % 2 === 1 ? "↓" : "↑"; // Columnas impares ↓, pares ↑
             } else {
                 // Celdas del tablero (coordenadas)
                 cell.className = "cell coordinate";
                 cell.dataset.coordinate = `${letters[col]}${row}`; // Ejemplo: A1, B2
             }
-
+    
             board.appendChild(cell);
         }
     }
 
+
+
     // Convertir coordenadas de letras y números a índices
     function toIndex(coordinate) {
-        const letter = coordinate.charAt(0).toUpperCase();
-        const number = parseInt(coordinate.charAt(1), 10);
-        const col = letters.indexOf(letter);
+        const regex = /^([A-J])(\d{1,2})$/i; // Valida coordenadas como A1, J10
+        const match = coordinate.match(regex);
+    
+        if (!match) {
+            alert("Por favor, ingresa una coordenada válida (Ejemplo: A1, J10)");
+            return null;
+        }
+    
+        const letter = match[1].toUpperCase(); // Extrae la letra
+        const number = parseInt(match[2], 10); // Convierte el número completo
+        const col = letters.indexOf(letter);  // Obtiene el índice de la letra
         const row = number;
+    
         return { row, col };
     }
 
