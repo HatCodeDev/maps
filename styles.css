@@ -1,0 +1,62 @@
+body {
+    background-color: #f4f4f9; /* Fondo gris claro */
+    font-family: 'Roboto', sans-serif;
+    color: #333; /* Texto oscuro */
+}
+
+h1, h3 {
+    color: #2c3e50; /* Azul oscuro */
+}
+
+#board {
+    display: grid;
+    grid-template-columns: repeat(12, 50px); /* 11 columnas (A-J + flechas) */
+    grid-template-rows: repeat(12, 50px); /* 11 filas (1-10 + flechas) */
+    gap: 0;
+    background-color: #ffffff;
+    border: 2px solid #2c3e50;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    padding: 0;
+}
+
+.container {
+    padding: 0;
+}
+
+.row.g-0 {
+    margin: 0;
+}
+
+.control-panel {
+    background-color: #ffffff;
+    border: 2px solid #2c3e50;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+}
+
+.cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    transition: all 0.2s ease;
+}
+
+.cell.path {
+    background-color: #3498db;
+    color: #ffffff;
+    font-weight: bold;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.instructions {
+    font-size: 14px;
+    color: #2c3e50;
+    font-style: italic;
+}
